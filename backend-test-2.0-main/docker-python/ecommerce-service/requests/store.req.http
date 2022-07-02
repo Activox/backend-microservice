@@ -1,0 +1,26 @@
+### Get Users
+GET http://localhost:8000/stores
+
+### Obtener Tienda por ID.
+GET http://localhost:8000/stores/3
+
+### Create User
+POST http://localhost:8000/stores
+Content-Type: application/json
+
+{
+    "name": "Ikea",
+    "description": "Store of things for Home",
+    "store_user_id": 1
+}
+
+### Actualizar Tienda.
+PUT http://localhost:8000/stores/1
+Content-Type: application/json
+
+{
+    "description": "Store that sells Things Online"
+}
+
+### Borrar Tienda.
+DELETE http://localhost:8000/stores/1

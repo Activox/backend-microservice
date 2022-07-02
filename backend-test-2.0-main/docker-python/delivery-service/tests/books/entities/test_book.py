@@ -2,8 +2,8 @@ from datetime import datetime
 
 from src.books.entities.book import Book
 
-class TestBook:
 
+class TestBook:
     def test_to_dict(self):
 
         # Crear instancia del libro.
@@ -32,9 +32,33 @@ class TestBook:
         title = "test"
         author = "test"
         pages = 20
-        created_at = datetime(year = 2021, month = 12, day = 25, hour = 10, minute = 24, second = 13, microsecond = 321654)
-        updated_at = datetime(year = 2021, month = 12, day = 25, hour = 10, minute = 24, second = 14, microsecond = 321654)
-        deleted_at = datetime(year = 2021, month = 12, day = 25, hour = 10, minute = 24, second = 15, microsecond = 321654)
+        created_at = datetime(
+            year=2021,
+            month=12,
+            day=25,
+            hour=10,
+            minute=24,
+            second=13,
+            microsecond=321654,
+        )
+        updated_at = datetime(
+            year=2021,
+            month=12,
+            day=25,
+            hour=10,
+            minute=24,
+            second=14,
+            microsecond=321654,
+        )
+        deleted_at = datetime(
+            year=2021,
+            month=12,
+            day=25,
+            hour=10,
+            minute=24,
+            second=15,
+            microsecond=321654,
+        )
 
         book = Book(id, title, author, pages, created_at, updated_at, deleted_at)
 

@@ -28,7 +28,6 @@ class FirestoreBooksRepository {
 
     const snapshot = await this.collection.get();
     const books = snapshot.docs.map(doc => this._getBookFromDocument(doc));
-
     return books;
 
   }
