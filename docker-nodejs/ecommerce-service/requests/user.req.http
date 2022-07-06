@@ -1,0 +1,26 @@
+### Obtener todos los libros.
+GET http://localhost:8000/users
+
+### Obtener libro por ID.
+GET http://localhost:8000/users/1
+
+### Crear libro.
+POST http://localhost:8000/users
+Content-Type: application/json
+
+{
+    "type": "Store User",
+    "email": "maperez@email.com",
+    "shippingAddress": "Calle falsa 123"
+}
+
+### Actualizar libro.
+PUT http://localhost:8000/users/1
+Content-Type: application/json
+
+{
+    
+}
+
+### Borrar libro.
+DELETE http://localhost:8000/users/1
