@@ -22,6 +22,7 @@ class ManageOrdersUsecase {
     const listOfOrders = data.map((order) => {
       const details = JSON.parse(order.details);
       const listOfProducts = details.map((detail) => ({
+        id: detail.productId,
         name: detail.name,
         quantity: detail.productQuantity,
         sku: detail.productSku,
@@ -51,11 +52,37 @@ class ManageOrdersUsecase {
   }
 
   async updateOrder(id, data) {
+    // update order
+    const validateStatus = await this.validateStatus(id, data);
+    if (validateStatus.code !== 200) {
+      return validateStatus;
+    }
+    const order = new Order(id, data.storeId, data.userId, data.status);
+    await this.ordersRepository.updateOrder(order);
+    const getOrderInfo = await this.getOrder(id);
+    return {
+      code: 200,
+      order: getOrderInfo,
+      message: "Order status updated",
+    };
+  }
+
+  async deleteOrder(id) {
+    await this.ordersRepository.deleteOrder(id);
+  }
+
+  async validateStatus(id, data) {
     const getOrder = await this.ordersRepository.getOrder(id);
     const currentOrderStatus = getOrder.status;
 
     // validate the order of the current status is the correct
-    const STATUS_ORDER = ["created", "confirmed", "dispached", "delivered"];
+    const STATUS_ORDER = ["created", "confirmed", "dispatched", "delivered"];
+    console.log({
+      currentOrderStatus,
+      newStatus: data.status,
+      actualIndex: STATUS_ORDER.indexOf(currentOrderStatus) + 1,
+      newIndex: STATUS_ORDER.indexOf(data.status),
+    });
     if (
       STATUS_ORDER.indexOf(currentOrderStatus) + 1 !==
         STATUS_ORDER.indexOf(data?.status) &&
@@ -81,20 +108,11 @@ class ManageOrdersUsecase {
           "Order can't be canceled, because it's dispached to the customer",
       };
     }
-
-    // update order
-    const order = new Order(id, data.storeId, data.userId, data.status);
-    await this.ordersRepository.updateOrder(order);
-
     return {
       code: 200,
-      order: order,
-      message: "Order status updated",
+      order: getOrder,
+      message: true,
     };
-  }
-
-  async deleteOrder(id) {
-    await this.ordersRepository.deleteOrder(id);
   }
 }
 

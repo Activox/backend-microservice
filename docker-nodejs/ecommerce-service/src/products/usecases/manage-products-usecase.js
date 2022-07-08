@@ -72,6 +72,23 @@ class ManageProductsUsecase {
 
     return productsOutStock.filter((product) => product.isExceedQty);
   }
+
+  async updateQuantity(listOfProducts, type = "reduce") {
+    await Promise.all(
+      await listOfProducts.map(async (product) => {
+        const productInfo = await this.productsRepository.getProduct(
+          product.id
+        );
+        const newQuantity =
+          type === "reduce"
+            ? productInfo.quantity - product.quantity
+            : productInfo.quantity + product.quantity;
+        await this.productsRepository.updateProduct(product.id, {
+          quantity: newQuantity,
+        });
+      })
+    );
+  }
 }
 
 module.exports = ManageProductsUsecase;

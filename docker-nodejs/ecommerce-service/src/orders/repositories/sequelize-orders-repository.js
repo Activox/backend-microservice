@@ -42,6 +42,10 @@ class SequelizeOrdersRepository {
     );
   }
 
+  async getOrder(id) {
+    return await this.orderModel.findByPk(id);
+  }
+
   async getOrders(id = null) {
     const where = id ? `WHERE Orders.id = '${id}'` : ``;
     const orders = await this.sequelizeClient.sequelize.query(
@@ -56,7 +60,7 @@ class SequelizeOrdersRepository {
             concat( '[',
                       group_concat(
                         (
-                            json_object('orderDetailId', OrderDetails.id, 'name',Products.name, 'productQuantity', OrderDetails.quantity, 'productSku', Products.sku)
+                            json_object('orderDetailId', OrderDetails.id, 'name',Products.name, 'productQuantity', OrderDetails.quantity, 'productSku', Products.sku, 'productId', Products.id)
                         )
                       ), ']'
             ) as details

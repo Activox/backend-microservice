@@ -18,6 +18,9 @@ services:
       - REDIS_HOST=${ECOMMERCE_REDIS_HOST}
       - FIRESTORE_EMULATOR_HOST=${ECOMMERCE_FIRESTORE_NAME}:8080
       - FIRESTORE_PROJECT_ID=${ECOMMERCE_FIRESTORE_NAME}
+      - ECOMMERCE_API_BASE_DOMAIN=http://192.168.1.122:8001
+
+    hostname: ${ECOMMERCE_SERVICE_NAME}
 
     command: ["npm", "run", "dev"]
   
@@ -33,7 +36,7 @@ services:
       - ecommerce-mysql
       - ecommerce-redis
       - ecommerce-firestore
-  
+        
   ecommerce-mysql:
   
     build: ${ECOMMERCE_SERVICE_PATH}/Docker/database/.
@@ -94,6 +97,8 @@ services:
       
     ports:
       - ${DELIVERY_APP_PORT}:8080
+
+    hostname: ${DELIVERY_SERVICE_NAME}
     
     depends_on:
       - delivery-mysql
@@ -132,4 +137,5 @@ services:
 
     environment:
       FIRESTORE_PROJECT_ID: ${DELIVERY_FIRESTORE_NAME}
-  
+
+    

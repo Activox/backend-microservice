@@ -31,14 +31,24 @@ Content-Type: application/json
 }
 
 ### PUT Order by ID
-PUT http://localhost:8000/orders/8
+PUT http://localhost:8000/orders/8/status
 Content-Type: application/json
 
 {
     "storeId": 1,
     "userId": 3,
-    "status": "delivered"
+    "status": "dispatched"
 }
 
 ### DELETE Order by ID
 DELETE http://localhost:8000/orders/1
+
+### 
+POST http://localhost:8001/deliverys
+Content-Type: application/json
+
+{ 
+    "orderId": 8 
+}
+###
+GET http://ecommerce-service:8001/orders

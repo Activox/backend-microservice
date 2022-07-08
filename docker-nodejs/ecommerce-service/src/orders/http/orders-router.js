@@ -2,6 +2,7 @@ const express = require("express");
 const appRoot = require("app-root-path");
 const Order = require("../entities/order");
 const validateSchema = require(appRoot + "/src/frameworks/http/ajv");
+const axios = require("axios");
 
 // Router (endpoints) para la sección de libros.
 
@@ -91,14 +92,9 @@ function createOrdersRouter(manageOrdersUsecase) {
         });
 
       // Update the quantity of each product
-      listOfProducts.forEach(async (product) => {
-        const productInfo = await manageProductsUsecase.getProduct(product.id);
-        const newQuantity = productInfo.quantity - product.quantity;
-        await manageProductsUsecase.updateProduct(product.id, {
-          quantity: newQuantity,
-        });
-      });
+      await manageProductsUsecase.updateQuantity(listOfProducts);
 
+      // assign details to order and return order
       order.details = listOfOrderDetails;
       res.status(201).send(order);
     } catch (error) {
@@ -109,15 +105,16 @@ function createOrdersRouter(manageOrdersUsecase) {
   });
 
   router.put("/orders/:id", async (req, res) => {
+    const id = req.params.id;
+
     validation = validateSchema(Order.schema, req);
 
-    if (validation === true) {
-      const id = req.params.id;
-      const order = await manageOrdersUsecase.updateOrder(id, req.body);
-      res.status(200).send(order);
-    } else {
+    if (!validation) {
       res.status(422).send(validation);
     }
+
+    const order = await manageOrdersUsecase.updateOrder(id, req.body);
+    res.status(200).send(order);
   });
 
   router.delete("/orders/:id", async (req, res) => {
@@ -125,6 +122,42 @@ function createOrdersRouter(manageOrdersUsecase) {
     await manageOrdersUsecase.deleteOrder(id);
 
     res.status(200).send(`Deleted ${id}`);
+  });
+
+  router.put("/orders/:id/status", async (req, res) => {
+    const id = req.params.id;
+    let deliveryInfo = null;
+    if (req.body?.status === "cancel") {
+      const order = await manageOrdersUsecase.getOrder(id);
+      // Update the quantity of each product
+      await manageProductsUsecase.updateQuantity(order.products, "add");
+    }
+
+    if (req.body?.status === "dispatched") {
+      try {
+        const response = await axios.post(
+          `${process.env.ECOMMERCE_API_BASE_DOMAIN}/deliverys`,
+          {
+            orderId: id,
+          }
+        );
+        deliveryInfo = response.data;
+      } catch (error) {
+        return res.status(500).send(error);
+      }
+    }
+    const { code, order, message } = await manageOrdersUsecase.updateOrder(
+      id,
+      req.body
+    );
+    const orderInfo = {
+      order: order[0].order,
+      origin: order[0].origin,
+      trackingNumber: deliveryInfo?.trackingNumber,
+      status: deliveryInfo?.status,
+    };
+
+    res.status(code).send(code === 200 ? orderInfo : message);
   });
 
   return router;

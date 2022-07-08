@@ -1,10 +1,9 @@
-const express = require('express');
-
+const express = require("express");
+const cors = require("cors");
 // Módulo para crear una aplicación en Express
 // recibiendo las dependencias externamente.
 
 async function createExpressApp(routers) {
-
   // Aplicación en Express.
 
   let app = express();
@@ -12,7 +11,7 @@ async function createExpressApp(routers) {
   // Configuraciones varias.
 
   app.use(express.json());
-
+  app.use(cors());
   // Usar rutas recibidas.
 
   for (let router of routers) {
@@ -28,7 +27,6 @@ async function createExpressApp(routers) {
   });
 
   return app;
-
 }
 
-module.exports = createExpressApp
+module.exports = createExpressApp;

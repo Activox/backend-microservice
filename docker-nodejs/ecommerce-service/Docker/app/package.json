@@ -18,7 +18,9 @@
       "ajv-errors": "^3.0.0",
       "mysql2": "^2.2.5",
       "redis": "^3.0.2",
-      "sequelize": "^6.6.2"
+      "sequelize": "^6.6.2",
+      "axios": "^0.18.0",
+      "cors": "^2.8.5"
     },
     "devDependencies": {
       "chai": "^4.2.0",
