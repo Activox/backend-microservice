@@ -51,6 +51,16 @@ class SequelizeProductsRepository {
     return products;
   }
 
+  async getProductByName(name) {
+    const options = {
+      where: {
+        name: name,
+      },
+    };
+
+    return await this.productModel.findOne(options);
+  }
+
   async getProduct(id) {
     return await this.productModel.findByPk(id);
   }

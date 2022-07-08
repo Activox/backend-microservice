@@ -64,14 +64,6 @@ function createUsersRouter(manageUsersUsecase) {
       return res.status(409).send({ message: "Email already exists" });
     }
 
-    // validate if userType is not Marketplace user the name is required
-    const userName = req.body.name;
-    if (!userName) {
-      return res.status(409).send({
-        message: "Name is required for non Marketplace User",
-      });
-    }
-
     // create user
     const user = await manageUsersUsecase.createUser(req.body);
     return res.status(201).send(user);
@@ -94,6 +86,12 @@ function createUsersRouter(manageUsersUsecase) {
     await manageUsersUsecase.deleteUser(id);
 
     res.status(200).send(`Deleted ${id}`);
+  });
+
+  router.get("/users/:id/orders", async (req, res) => {
+    const id = req.params.id;
+    const orders = await manageUsersUsecase.getUserOrders(id);
+    res.status(200).send(orders);
   });
 
   return router;

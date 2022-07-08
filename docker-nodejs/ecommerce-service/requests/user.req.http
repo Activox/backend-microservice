@@ -1,16 +1,20 @@
-### Obtener todos los libros.
+### Obtener todos los Usuarios.
 GET http://localhost:8000/users
 
-### Obtener libro por ID.
+### Obtener Usuario por ID.
 GET http://localhost:8000/users/1
 
-### Crear libro.
+### Obtener Ordenes del usuario
+GET http://localhost:8000/users/2/orders
+
+### Crear Usuario.
 POST http://localhost:8000/users
 Content-Type: application/json
 
 {
-    "type": "Store User",
-    "email": "maperez@email.com",
+    "name": "Raine",
+    "type": "Marketplace User",
+    "email": "raine@email.com",
     "shippingAddress": "Calle falsa 123"
 }
 
@@ -19,7 +23,10 @@ PUT http://localhost:8000/users/1
 Content-Type: application/json
 
 {
-    
+    "name": "",
+    "type": "",
+    "email": "",
+    "shippingAddress": ""
 }
 
 ### Borrar libro.

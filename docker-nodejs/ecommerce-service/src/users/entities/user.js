@@ -12,7 +12,7 @@ class User {
         errorMessage: "must be of string type",
       },
     },
-    required: ["type", "email"],
+    required: ["name", "type", "email"],
     additionalProperties: false,
   };
 

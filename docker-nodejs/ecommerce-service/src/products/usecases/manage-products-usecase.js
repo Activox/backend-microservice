@@ -18,12 +18,17 @@ class ManageProductsUsecase {
   }
 
   async createProduct(data) {
+    const product_name = data.name.split(" ");
+    let sku = product_name.map((value) => {
+      return value.substring(0, 3).toUpperCase();
+    });
+
     const product = new Product(
       undefined,
       data.name,
       data.description,
       data.quantity,
-      data.sku
+      sku.join(Math.floor(Math.random() * 10))
     );
     const id = await this.productsRepository.createProduct(product);
     product.id = id;
@@ -46,6 +51,26 @@ class ManageProductsUsecase {
 
   async deleteProduct(id) {
     await this.productsRepository.deleteProduct(id);
+  }
+
+  async isProductExist(name) {
+    await this.productsRepository.getProductByName(name);
+  }
+
+  async validateProductsStock(listOfProducts) {
+    const productsOutStock = await Promise.all(
+      await listOfProducts.map(async (product) => {
+        const productInfo = await this.productsRepository.getProduct(
+          product.id
+        );
+        return {
+          isExceedQty: product.quantity > productInfo.quantity,
+          name: productInfo.name,
+        };
+      })
+    );
+
+    return productsOutStock.filter((product) => product.isExceedQty);
   }
 }
 

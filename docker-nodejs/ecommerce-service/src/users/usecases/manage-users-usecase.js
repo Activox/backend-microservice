@@ -51,6 +51,34 @@ class ManageUsersUsecase {
   async deleteUser(id) {
     await this.usersRepository.deleteUser(id);
   }
+
+  async getUserOrders(id) {
+    const userOrders = await this.usersRepository.getUserOrders(id);
+    const listOfUserOrders = userOrders.map((userOrder) => {
+      const details = JSON.parse(userOrder.details);
+      const listOfProducts = details.map((detail) => ({
+        name: detail.name,
+        quantity: detail.productQuantity,
+        sku: detail.productSku,
+      }));
+
+      return {
+        order: {
+          id: userOrder.orderId,
+          status: userOrder.status,
+          products: listOfProducts,
+        },
+        origin: {
+          address: userOrder.warehouseAddress,
+        },
+        destination: {
+          name: userOrder.buyerName,
+          address: userOrder.buyerShippingAddress,
+        },
+      };
+    });
+    return listOfUserOrders;
+  }
 }
 
 module.exports = ManageUsersUsecase;

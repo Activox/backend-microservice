@@ -3,12 +3,13 @@ const appRoot = require("app-root-path");
 const Store = require("../entities/store");
 const validateSchema = require(appRoot + "/src/frameworks/http/ajv");
 
-// Router (endpoints) para la sección de libros.
-
+// Router (endpoints) para la sección de Tiendas.
 // Sólo se encarga de recibir las llamadas HTTP y le entrega los datos
 // relevantes a los casos de uso correspondiente. Esta capa no debe
 // contener lógica de negocio, sólo lo necesario para recibir y entregar
 // respuestas válidas.
+
+const { manageUsersUsecase } = require("../../routersUsecase");
 
 function createStoresRouter(manageStoresUsecase) {
   const router = express.Router();
@@ -34,6 +35,21 @@ function createStoresRouter(manageStoresUsecase) {
 
     // Validate that user exists.
     const userId = req.body.userId;
+    const userInfo = await manageUsersUsecase.getUser(userId);
+    if (!userInfo) {
+      return res.status(404).send({
+        message: "User not found.",
+      });
+    }
+
+    // validate if the user is admin.
+    const userType = userInfo.type;
+    if (userType.toLowerCase() !== "marketplace administrator") {
+      return res.status(403).send({
+        message:
+          "To create a store, the user must be a marketplace administrator.",
+      });
+    }
 
     // validate store name is unique
     const storeName = req.body.name;
@@ -45,7 +61,7 @@ function createStoresRouter(manageStoresUsecase) {
         message: "Store name already exists",
       });
     }
-
+    // Create store.
     const store = await manageStoresUsecase.createStore(req.body);
     return res.status(201).send(store);
   });

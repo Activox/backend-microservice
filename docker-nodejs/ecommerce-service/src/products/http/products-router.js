@@ -1,6 +1,6 @@
-const express = require('express');
-const appRoot = require('app-root-path');
-const Product = require('../entities/product');
+const express = require("express");
+const appRoot = require("app-root-path");
+const Product = require("../entities/product");
 const validateSchema = require(appRoot + "/src/frameworks/http/ajv");
 
 // Router (endpoints) para la sección de libros.
@@ -11,42 +11,44 @@ const validateSchema = require(appRoot + "/src/frameworks/http/ajv");
 // respuestas válidas.
 
 function createProductsRouter(manageProductsUsecase) {
-
   const router = express.Router();
 
   router.get("/products", async (req, res) => {
-
     const products = await manageProductsUsecase.getProducts();
     res.status(200).send(products);
-
   });
 
   router.get("/products/:id", async (req, res) => {
-
     const id = req.params.id;
     const product = await manageProductsUsecase.getProduct(id);
-    
+
     res.status(200).send(product);
-    
   });
-  
+
   router.post("/products", async (req, res) => {
-    
     validation = validateSchema(Product.schema, req);
-    
-    if (validation === true) {
-      const product = await manageProductsUsecase.createProduct(req.body);
-      res.status(201).send(product);
-    } else {
-      res.status(422).send(validation)
+    if (!validation) {
+      return res.status(422).send(validation);
     }
 
+    // Validar que el producto no exista.
+    const isProductExist = await manageProductsUsecase.isProductExist(
+      req.body.name
+    );
+    if (isProductExist) {
+      return res.status(409).send({
+        message: `El producto ${req.body.name} ya existe`,
+      });
+    }
+
+    // Crear el producto.
+    const productSaved = await manageProductsUsecase.createProduct(req.body);
+    res.status(201).send(productSaved);
   });
 
   router.put("/products/:id", async (req, res) => {
-    
     validation = validateSchema(Product.schema, req);
-    
+
     if (validation === true) {
       const id = req.params.id;
       const product = await manageProductsUsecase.updateProduct(id, req.body);
@@ -54,20 +56,16 @@ function createProductsRouter(manageProductsUsecase) {
     } else {
       res.status(422).send(validation);
     }
-
   });
 
   router.delete("/products/:id", async (req, res) => {
-
     const id = req.params.id;
     await manageProductsUsecase.deleteProduct(id);
 
     res.status(200).send(`Deleted ${id}`);
-
   });
 
   return router;
-
 }
 
 module.exports = createProductsRouter;

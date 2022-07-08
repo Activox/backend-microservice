@@ -1,4 +1,4 @@
-const { DataTypes } = require("sequelize");
+const { DataTypes, QueryTypes } = require("sequelize");
 
 // Implementación con Sequelize para el repositorio de libros.
 // Recibe la conexión con Sequelize externamente.
@@ -100,6 +100,45 @@ class SequelizeUsersRepository {
     if (this.test) {
       await this.userModel.drop();
     }
+  }
+
+  async getUserOrders(id) {
+    const orders = await this.sequelizeClient.sequelize.query(
+      `
+        select 
+            Orders.id as orderId,
+            Stores.id as storeId,
+            Stores.name as storeName,
+            Stores.warehouseAddress,
+            Orders.id as orderId,
+            Orders.status,
+            buyerUser.id as buyerId,
+            buyerUser.name as buyerName,
+            buyerUser.email as buyerEmail,
+            buyerUser.shippingAddress as buyerShippingAddress,
+            concat( '[',
+              group_concat(
+                (
+                    json_object('orderDetailId', OrderDetails.id, 'name',Products.name, 'productQuantity', OrderDetails.quantity, 'productSku', Products.sku)
+                )
+              ), ']'
+            ) as details
+        
+        from Users
+        inner join Stores on Users.id = Stores.userId
+        inner join Orders on Stores.id = Orders.storeId
+        inner join Users as buyerUser on Orders.userId = buyerUser.id
+        inner join OrderDetails on Orders.id = OrderDetails.orderId
+        inner join Products on OrderDetails.productId = Products.id
+        where Users.id = '${id}'
+        group by Stores.id, Stores.name, Stores.warehouseAddress, Orders.id, Orders.status, buyerUser.id, buyerUser.name, buyerUser.email, buyerUser.shippingAddress;
+      `,
+      {
+        type: QueryTypes.SELECT,
+      }
+    );
+
+    return orders;
   }
 }
 

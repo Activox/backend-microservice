@@ -1,8 +1,18 @@
 ### GET Products
+GET http://localhost:8000/products
 
 ### GET Produdct by ID
+GET http://localhost:8000/products/1
 
 ### POST Product
+POST http://localhost:8000/products
+Content-Type: application/json
+
+{
+    "name": "Product 13",
+    "description": "Product 13 description",
+    "quantity": "10"
+}
 
 ### PUT Product
 

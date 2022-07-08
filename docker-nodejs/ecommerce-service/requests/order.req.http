@@ -1,9 +1,44 @@
 ### GET Orders
-
+GET http://localhost:8000/orders
 ### GET Order by ID
-
+GET http://localhost:8000/orders/8
 ### POST Order
+POST http://localhost:8000/orders
+Content-Type: application/json
+
+{
+    "storeId": 1,
+    "userId": 3,
+    "products": [
+        {
+            "id": 5,
+            "quantity": 1
+        },
+        {
+            "id": 6,
+            "quantity": 1
+        },
+        {
+            "id": 7,
+            "quantity": 2
+        },
+        {
+            "id": 8,
+            "quantity": 3
+        }
+    ]
+    
+}
 
 ### PUT Order by ID
+PUT http://localhost:8000/orders/8
+Content-Type: application/json
+
+{
+    "storeId": 1,
+    "userId": 3,
+    "status": "delivered"
+}
 
 ### DELETE Order by ID
+DELETE http://localhost:8000/orders/1

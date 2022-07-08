@@ -1,4 +1,4 @@
-const { DataTypes } = require("sequelize");
+const { DataTypes, QueryTypes } = require("sequelize");
 
 // Implementación con Sequelize para el repositorio de libros.
 // Recibe la conexión con Sequelize externamente.
@@ -42,16 +42,37 @@ class SequelizeOrdersRepository {
     );
   }
 
-  async getOrders() {
-    const orders = await this.orderModel.findAll({
-      raw: true,
-    });
+  async getOrders(id = null) {
+    const where = id ? `WHERE Orders.id = '${id}'` : ``;
+    const orders = await this.sequelizeClient.sequelize.query(
+      `
+        SELECT 
+            Orders.id as orderId,
+            Stores.id as storeId,
+            Stores.name as storeName,
+            Stores.warehouseAddress,
+            Orders.id as orderId,
+            Orders.status,
+            concat( '[',
+                      group_concat(
+                        (
+                            json_object('orderDetailId', OrderDetails.id, 'name',Products.name, 'productQuantity', OrderDetails.quantity, 'productSku', Products.sku)
+                        )
+                      ), ']'
+            ) as details
+        FROM Orders
+        inner join Stores on Orders.storeId = Stores.id
+        inner join OrderDetails on Orders.id = OrderDetails.orderId
+        inner join Products on OrderDetails.productId = Products.id
+        ${where}
+        group by Stores.id, Stores.name, Stores.warehouseAddress, Orders.id, Orders.status;
+      `,
+      {
+        type: QueryTypes.SELECT,
+      }
+    );
 
     return orders;
-  }
-
-  async getOrder(id) {
-    return await this.orderModel.findByPk(id);
   }
 
   async createOrder(order) {

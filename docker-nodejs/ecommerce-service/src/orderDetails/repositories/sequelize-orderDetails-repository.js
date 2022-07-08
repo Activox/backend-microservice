@@ -3,16 +3,16 @@ const { DataTypes } = require("sequelize");
 // Implementación con Sequelize para el repositorio de libros.
 // Recibe la conexión con Sequelize externamente.
 
-class SequelizeOrderDetailDetailsRepository {
+class SequelizeOrderDetailsRepository {
   constructor(sequelizeClient, test = false) {
     this.sequelizeClient = sequelizeClient;
     this.test = test;
 
-    // Mapear la tabla OrderDetailDetail.
+    // Mapear la tabla OrderDetail.
     // Si "test" es true, se le agrega un sufijo al nombre de la tabla,
     // para que las pruebas de integración no sobreescriban los datos existentes.
 
-    let tableName = "OrderDetailDetails";
+    let tableName = "OrderDetails";
 
     if (test) {
       tableName += "_test";
@@ -34,65 +34,65 @@ class SequelizeOrderDetailDetailsRepository {
       timestamps: false,
     };
 
-    this.orderdetaildetailModel = sequelizeClient.sequelize.define(
-      "OrderDetailDetail",
+    this.orderDetailModel = sequelizeClient.sequelize.define(
+      "OrderDetail",
       columns,
       options
     );
   }
 
-  async getOrderDetailDetails() {
-    const orderdetaildetails = await this.orderdetaildetailModel.findAll({
+  async getOrderDetails() {
+    const orderDetails = await this.orderDetailModel.findAll({
       raw: true,
     });
 
-    return orderdetaildetails;
+    return orderDetails;
   }
 
-  async getOrderDetailDetail(id) {
-    return await this.orderdetaildetailModel.findByPk(id);
+  async getOrderDetail(id) {
+    return await this.orderDetailModel.findByPk(id);
   }
 
-  async createOrderDetailDetail(orderdetaildetail) {
-    const data = await this.orderdetaildetailModel.create(orderdetaildetail);
+  async createOrderDetail(orderDetail) {
+    const data = await this.orderDetailModel.create(orderDetail);
     return data.id;
   }
 
-  async updateOrderDetailDetail(orderdetaildetail) {
+  async updateOrderDetail(orderDetail) {
     const options = {
       where: {
-        id: orderdetaildetail.id,
+        id: orderDetail.id,
       },
     };
 
-    await this.orderdetaildetailModel.update(orderdetaildetail, options);
+    await this.orderDetailModel.update(orderDetail, options);
   }
 
-  async deleteOrderDetailDetail(id) {
+  async deleteOrderDetail(id) {
     const options = {
       where: {
         id: id,
       },
     };
 
-    await this.orderdetaildetailModel.destroy(options);
+    await this.orderDetailModel.destroy(options);
   }
 
-  async deleteAllOrderDetailDetails() {
+  async deleteAllOrderDetail() {
     if (this.test) {
       const options = {
         truncate: true,
       };
 
-      await this.orderdetaildetailModel.destroy(options);
+      await this.orderDetailModel.destroy(options);
     }
   }
 
-  async dropOrderDetailDetailsTable() {
+  async dropOrderDetailsTable() {
     if (this.test) {
-      await this.orderdetaildetailModel.drop();
+      await this.orderDetailModel.drop();
     }
   }
 }
 
-module.exports = SequelizeOrderDetailDetailsRepository;
+module.exports = SequelizeOrderDetailsRepository;

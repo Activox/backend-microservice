@@ -18,16 +18,19 @@ class ManageOrderDetailsUsecase {
   }
 
   async createOrderDetail(data) {
-    const orderdetail = new OrderDetail(
-      undefined,
-      data.orderId,
-      data.productId,
-      data.quantity
-    );
-    const id = await this.orderdetailsRepository.createOrderDetail(orderdetail);
-    orderdetail.id = id;
+    const listOfDetails = await data.listOfProducts.map(async (product) => {
+      return new OrderDetail(data.orderId, product.productId, product.quantity);
+    });
 
-    return orderdetail;
+    const listOfDetailsSaved = await Promise.all(
+      await listOfDetails.map(async (detail) => {
+        const id = await this.orderdetailsRepository.createOrderDetail(detail);
+        detail.id = id;
+        return detail;
+      })
+    );
+
+    return listOfDetailsSaved;
   }
 
   async updateOrderDetail(id, data) {
