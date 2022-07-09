@@ -11,7 +11,7 @@ This is a REST API using Javascript Technologies and MySQL and handle 2 microser
 
 This is relationship of ecommerce microservice
 
-![](./docs/ecommerce-service.png)
+![](./docs/Ecommerce-service.png)
 
 This is relationship of delivery microservice
 
