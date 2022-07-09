@@ -1,0 +1,47 @@
+// Creating tables
+Table users as user {
+  id int [pk, increment] // auto-increment
+  name string
+  type string
+  email string
+  shippingAddress string
+}
+
+Table stores as store {
+  id int [pk, increment] // auto-increment
+  description string
+  userId int
+  warehouseAddress string
+ }
+
+// Creating references
+// > many-to-one; < one-to-many; - one-to-one
+Ref: user.id < store.userId  
+
+Table orders as order {
+  id int [pk, increment] // auto-increment
+  storeId int
+  userId int
+  status string
+}
+
+Table orderDetails as details {
+  id int [pk, increment]
+  orderId int
+  productId int
+  quantity int
+}
+
+Table products as product {
+  id int [pk, increment]
+  name string
+  description string
+  quantity int
+}
+
+// Creating references
+// > many-to-one; < one-to-many; - one-to-one
+Ref: order.storeId - store.id
+Ref: order.userId - user.id
+Ref: details.orderId - order.id
+Ref: details.productId > product.id

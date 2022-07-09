@@ -1,0 +1,18 @@
+// Creating tables
+Table deliverys as delivery {
+  id int [pk, increment] // auto-increment
+  orderId int
+  trackingNumber string
+  status string
+}
+
+Table trackingLogs as tracking {
+  id int [pk, increment] // auto-increment
+  deliveryId int
+  status string
+  date datetime
+ }
+
+// Creating references
+// > many-to-one; < one-to-many; - one-to-one
+Ref: delivery.id < tracking.deliveryId  
