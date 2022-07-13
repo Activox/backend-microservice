@@ -136,7 +136,7 @@ function createOrdersRouter(manageOrdersUsecase) {
     if (req.body?.status === "dispatched") {
       try {
         const response = await axios.post(
-          `http://host.docker.internal:8001/deliverys`,
+          `${process.env.ECOMMERCE_API_BASE_DOMAIN}/deliverys`,
           {
             orderId: id,
           }

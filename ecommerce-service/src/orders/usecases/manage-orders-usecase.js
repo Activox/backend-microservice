@@ -15,7 +15,8 @@ class ManageOrdersUsecase {
 
   async getOrder(id) {
     const orders = await this.ordersRepository.getOrders(id);
-    return await this.buildOrder(orders);
+    const buildOrder = await this.buildOrder(orders);
+    return buildOrder;
   }
 
   async buildOrder(data) {
@@ -60,9 +61,6 @@ class ManageOrdersUsecase {
     const order = new Order(id, data.storeId, data.userId, data.status);
     await this.ordersRepository.updateOrder(order);
     const getOrderInfo = await this.getOrder(id);
-    console.log({
-      getOrderInfo,
-    });
     return {
       code: 200,
       order: getOrderInfo,
@@ -106,6 +104,7 @@ class ManageOrdersUsecase {
           "Order can't be canceled, because it's dispached to the customer",
       };
     }
+
     return {
       code: 200,
       order: getOrder,

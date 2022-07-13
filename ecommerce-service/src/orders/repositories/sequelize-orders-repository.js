@@ -75,7 +75,6 @@ class SequelizeOrdersRepository {
         type: QueryTypes.SELECT,
       }
     );
-
     return orders;
   }
 

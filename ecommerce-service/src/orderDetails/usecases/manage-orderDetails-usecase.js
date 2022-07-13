@@ -19,17 +19,24 @@ class ManageOrderDetailsUsecase {
 
   async createOrderDetail(data) {
     const listOfDetails = await data.listOfProducts.map(async (product) => {
-      return new OrderDetail(data.orderId, product.productId, product.quantity);
+      return new OrderDetail(
+        undefined,
+        data.orderId,
+        product.id,
+        product.quantity
+      );
     });
 
     const listOfDetailsSaved = await Promise.all(
       await listOfDetails.map(async (detail) => {
-        const id = await this.orderdetailsRepository.createOrderDetail(detail);
+        const detailInfo = await detail;
+        const id = await this.orderdetailsRepository.createOrderDetail(
+          detailInfo
+        );
         detail.id = id;
         return detail;
       })
     );
-
     return listOfDetailsSaved;
   }
 

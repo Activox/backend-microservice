@@ -32,7 +32,12 @@ class ManageDeliverysUsecase {
   }
 
   async updateDelivery(id, data) {
-    const delivery = new Delivery(id, data.title, data.author, data.pages);
+    const delivery = new Delivery(
+      id,
+      data.orderId,
+      data.status,
+      data.trackingNumber
+    );
     await this.deliverysRepository.updateDelivery(delivery);
 
     return delivery;
