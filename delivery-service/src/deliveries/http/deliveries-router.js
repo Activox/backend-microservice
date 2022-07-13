@@ -38,7 +38,7 @@ function createDeliverysRouter(manageDeliverysUsecase) {
       status: "READY_FOR_PICK_UP",
     };
 
-    await manageTrackingLogsUsecase.createTrackingLog(trackingBody);
+    await manageTrackingLogsUsecase.createTrackingLogs(trackingBody);
 
     res.status(201).send(delivery);
   });
@@ -58,7 +58,7 @@ function createDeliverysRouter(manageDeliverysUsecase) {
       status: req.body.status,
     };
 
-    await manageTrackingLogsUsecase.updateTrackingLogs(trackingBody);
+    await manageTrackingLogsUsecase.createTrackingLogs(trackingBody);
 
     res.status(200).send(delivery);
   });
